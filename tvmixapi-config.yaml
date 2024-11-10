@@ -1,0 +1,67 @@
+server_port: 8080
+external_url: "http://localhost:8080"
+
+log:
+  output: "stdout"
+  level: 2
+
+sources:
+  - name: "main_source"
+    url: "https://qist.ugigc.us.kg/jsm.json"
+    type: "tvbox_single"
+    interval: 3600
+  - name: "multi_source"
+    url: "http://xhztv.top/tvbox.txt"
+    type: "tvbox_multi"
+    interval: 7200
+  - name: "epg_source"
+    url: "https://epg.v1.mk/fy.xml"
+    type: "epg"
+    interval: 7200
+  - name: "m3u_media"
+    url: "https://raw.githubusercontent.com/YanG-1989/m3u/main/Gather.m3u"
+    type: "m3u"
+
+tvbox_single_repo_opt:
+  disable: false
+  spider:
+    source_name: "main_source"
+  sites:
+    - source_name: "main_source"
+      filter_by: "key"
+      include: ".*"
+      exclude: "^adult_"
+  lives:
+    - source_name: "main_source"
+      filter_by: "key"
+      include: ".*"
+      exclude: "^adult_"
+  fallback:
+    source_name: "main_source"
+
+tvbox_multi_repo_opt:
+  disable: false
+  include_single_repo: true
+  repos:
+  - source_name: "multi_source"
+    field: "repos"
+    filter_by: "name"
+    include: ".*"
+    exclude: "^test_"
+
+epg:
+  disable: false
+  filters:
+    - source_name: "epg_source"
+      filter_by: "channel_id"
+      include: ".*"
+      # exclude: ".*"
+
+m3u:
+  disable: false
+  media_playlist_filters:
+    - source_name: "m3u_media"
+      filter_by: "name"
+      include: ".*"
+  media_playlist_fallback:
+    source_name: "m3u_media"
